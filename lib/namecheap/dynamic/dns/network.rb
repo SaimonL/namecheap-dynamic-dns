@@ -6,6 +6,7 @@ module Namecheap
       # This module is designed for all network related functions.
       module Network
         def external_ip
+          binding.pry
           self.ip = open('http://whatismyip.akamai.com').read
         end
 
@@ -28,6 +29,10 @@ module Namecheap
         def host_ip_match?(domain, target, target_ip)
           host = %w(@ *).include?(target) ? domain : [target, domain].join('.')
           host_to_ip(host) == target_ip
+        end
+
+        def valid_domain?(target_domain)
+          !target_domain.match(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,16}\z/ix).nil?
         end
       end
     end

@@ -16,6 +16,8 @@ require 'namecheap/dynamic/dns/request'
 require 'namecheap/dynamic/dns/settings'
 require 'namecheap/dynamic/dns/network'
 
+require 'pry'
+
 module Namecheap
   module Dynamic
     # This is the main module where all the rest loads from.
@@ -25,7 +27,7 @@ module Namecheap
       include Settings
       include Network
 
-      attr_accessor :config_file, :config, :response, :xml_response, :ip
+      attr_accessor :config_file, :config, :response, :xml_response, :ip, :updated_domains
 
       def setup(config_file)
         self.config_file = config_file
@@ -36,3 +38,15 @@ module Namecheap
     end
   end
 end
+
+class Example
+  include Namecheap::Dynamic::Dns
+
+  def initialize(config_file)
+    setup(config_file)
+  end
+end
+
+
+e = Example.new('domains.yml')
+# e.process_domains

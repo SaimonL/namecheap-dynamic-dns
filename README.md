@@ -22,13 +22,44 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information.
 
-## Development
+### YML
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Create a YML file with the following:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```yaml
+---
+domains:
+  example.com:
+    password: 74gh9j3eufh86gh39jygh9f8h3f4
+
+    subdomains:
+      home:
+      test:
+        ip: 1.2.3.4
+
+  foo.com:
+    password: 3fj987jg0wi4u9e84fh0342jghjd
+    ip: 2.4.6.8
+
+    subdomains:
+      bar:
+      donkey:
+        ip: 1.3.5.7    
+```
+
+Make sure that you git ignore this file since it has your password in it.
+
+### Using Ruby
+
+In your ruby script include the modules.
+
+```ruby
+require 'namecheap-dynamic-dns'
+
+include Namecheap::Dynamic::Dns
+```
 
 ## Contributing
 
@@ -38,4 +69,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

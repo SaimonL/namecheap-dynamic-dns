@@ -6,15 +6,17 @@ module Namecheap
       # This module puts it all together and the main functions are here.
       module Processor
         def process_domains
+          self.updated_domains = []
           return unless domains?
           domains.each do |domain, attr|
+            next unless valid_domain?(domain)
             next unless subdomains?(attr)
             password = attr[:password]
             next unless password
             target_ip = attr[:ip] ||= ip
 
             puts "Checking domain: #{domain}"
-            process_subdomains(domain, attr[:subdomains], password, target_ip)
+            process_subdomains(domain, attr[:subdomains], password, extract_ip(target_ip))
             puts ''
           end
         end
@@ -22,19 +24,22 @@ module Namecheap
         private
 
         def process_subdomains(domain, subdomains, password, target_ip)
-          subdomains.each do |subdomain|
-            target = subdomain[:target]
-            target_ip = process_ip(target_ip, subdomain)
-            next unless target
+          subdomains.each do |subdomain, attributes|
+            ip = target_ip
+            unless attributes.nil?
+              ip = extract_ip(attributes[:ip]) if attributes.key?(:ip) && !attributes[:ip].strip.empty?
+            end
 
-            if host_ip_match?(domain, target, target_ip)
-              puts "  - Host '#{target}' is Valid."
+            next unless valid_domain?([subdomain, domain].join('.'))
+
+            if host_ip_match?(domain, subdomain, ip)
+              puts "  - Host '#{subdomain}' is Valid."
               next
             end
 
-            # Keep in mind that DNS change can takes from 1 min 24 hours
-            puts "  - Updating host '#{target}' !!"
-            request generate_url(target, domain, password, target_ip)
+            puts "  - Updating host '#{subdomain}' !!"
+            request generate_url(subdomain, domain, password, ip)
+            self.updated_domains.push [subdomain, domain].join('.')
           end
         end
 
