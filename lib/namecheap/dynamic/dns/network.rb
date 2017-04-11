@@ -6,12 +6,24 @@ module Namecheap
       # This module is designed for all network related functions.
       module Network
         def external_ip
-          binding.pry
-          self.ip = open('http://whatismyip.akamai.com').read
+          begin
+            self.ip = open('http://whatismyip.akamai.com').read
+          rescue StandardError => err
+            self.ip = nil
+            logger.warn('Failed to retrieve external I.P.')
+            logger.debug(err)
+          end
         end
 
         def host_to_ip(host_name)
-          Resolv.getaddress(host_name)
+          begin
+            Resolv.getaddress(host_name)
+          rescue StandardError => err
+            logger.warn('Failed to retrieve host I.P. address')
+            logger.debug("Host Name: #{err}")
+            logger.debug(err)
+            host_name
+          end
         end
 
         def an_ip?(host_name)

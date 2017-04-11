@@ -6,13 +6,12 @@ module Namecheap
       # This module puts it all together and the main functions are here.
       module Processor
         def process_domains
+          return unless pre_check_domain
           self.updated_domains = []
-          return unless domains?
+
           domains.each do |domain, attr|
-            next unless valid_domain?(domain)
-            next unless subdomains?(attr)
+            next unless pre_check_sub_domains(domain, attr)
             password = attr[:password]
-            next unless password
             target_ip = attr[:ip] ||= ip
 
             puts "Checking domain: #{domain}"
@@ -22,6 +21,20 @@ module Namecheap
         end
 
         private
+
+        def pre_check_domain
+          return if ip.nil?
+          return unless domains?
+          true
+        end
+
+        def pre_check_sub_domains(domain, attr)
+          return unless valid_domain?(domain)
+          return unless subdomains?(attr)
+          return unless attr.key?(:password)
+          return if attr[:ip].nil? && ip.nil?
+          true
+        end
 
         def process_subdomains(domain, subdomains, password, target_ip)
           subdomains.each do |subdomain, attributes|

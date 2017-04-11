@@ -9,6 +9,7 @@ require 'yaml'
 require 'open-uri'
 require 'resolv'
 require 'ipaddress'
+require 'logger'
 
 require 'namecheap/dynamic/dns/version'
 require 'namecheap/dynamic/dns/processor'
@@ -27,12 +28,14 @@ module Namecheap
       include Settings
       include Network
 
-      attr_accessor :config_file, :config, :response, :xml_response, :ip, :updated_domains
+      attr_accessor :config_file, :config, :response, :xml_response, :ip, :updated_domains, :logger
 
       def setup(config_file)
         self.config_file = config_file
         load_config
         external_ip
+        self.logger = Logger.new(STDOUT)
+        logger.level = Logger::WARN
       end
 
     end
