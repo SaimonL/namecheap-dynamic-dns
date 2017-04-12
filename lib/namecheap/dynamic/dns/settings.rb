@@ -22,7 +22,25 @@ module Namecheap
         end
 
         def subdomains?(domain)
-          domain.key?(:subdomains) && !domain[:subdomains].empty?
+          return true if domain.key?(:subdomains) && !domain[:subdomains].empty?
+          logger.error('Subdomains are not found.')
+          false
+        end
+
+        def valid_domain?(domain)
+          unless valid_domain?(domain)
+            logger.error("Invalid domain found #{domain}.")
+            return false
+          end
+          true
+        end
+
+        def password?(attr)
+          unless attr.key?(:password)
+            logger.error("No password is specified for #{domain}.")
+            return false
+          end
+          true
         end
       end
     end

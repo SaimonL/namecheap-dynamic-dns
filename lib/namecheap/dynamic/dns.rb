@@ -45,11 +45,8 @@ end
 class Example
   include Namecheap::Dynamic::Dns
 
-  def initialize(config_file)
-    setup(config_file)
+  def initialize
+    setup('domains.yml')
+    process_domains
   end
 end
-
-
-e = Example.new('domains.yml')
-# e.process_domains

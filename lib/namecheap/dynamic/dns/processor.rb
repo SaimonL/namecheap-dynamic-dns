@@ -11,54 +11,53 @@ module Namecheap
 
           domains.each do |domain, attr|
             next unless pre_check_sub_domains(domain, attr)
-            password = attr[:password]
-            target_ip = attr[:ip] ||= ip
-
-            puts "Checking domain: #{domain}"
-            process_subdomains(domain, attr[:subdomains], password, extract_ip(target_ip))
-            puts ''
+            logger.info("Checking domain: #{domain}")
+            process_subdomains(domain,
+                               attr[:subdomains],
+                               attr[:password],
+                               extract_ip(attr[:ip] ||= ip))
           end
         end
 
         private
 
         def pre_check_domain
-          return if ip.nil?
-          return unless domains?
-          true
+          return false unless got_external_ip?
+          domains?
         end
 
         def pre_check_sub_domains(domain, attr)
           return unless valid_domain?(domain)
+          return unless password?(attr)
           return unless subdomains?(attr)
-          return unless attr.key?(:password)
           return if attr[:ip].nil? && ip.nil?
           true
         end
 
         def process_subdomains(domain, subdomains, password, target_ip)
           subdomains.each do |subdomain, attributes|
-            ip = target_ip
-            unless attributes.nil?
-              ip = extract_ip(attributes[:ip]) if attributes.key?(:ip) && !attributes[:ip].strip.empty?
-            end
+            ip = process_ip(target_ip, attributes)
 
             next unless valid_domain?([subdomain, domain].join('.'))
 
             if host_ip_match?(domain, subdomain, ip)
-              puts "  - Host '#{subdomain}' is Valid."
+              logger.info("  - Host '#{subdomain}' is Valid.")
               next
+            else
+              process_subdomain(domain, subdomain, password, ip)
             end
-
-            puts "  - Updating host '#{subdomain}' !!"
-            request generate_url(subdomain, domain, password, ip)
-            self.updated_domains.push [subdomain, domain].join('.')
           end
         end
 
-        def process_ip(target_ip, subdomain)
-          if subdomain.key?(:ip) && !subdomain[:ip].strip.empty?
-            target_ip = subdomain[:ip]
+        def process_subdomain(domain, subdomain, password, ip)
+          logger.info("  - Updating host '#{subdomain}' !!")
+          request generate_url(subdomain, domain, password, ip)
+          updated_domains.push [subdomain, domain].join('.')
+        end
+
+        def process_ip(target_ip, attributes)
+          if attributes.key?(:ip) && !attributes[:ip].strip.empty?
+            target_ip = attributes[:ip]
           end
           extract_ip(target_ip)
         end
