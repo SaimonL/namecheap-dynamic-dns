@@ -41,12 +41,3 @@ module Namecheap
     end
   end
 end
-
-class Example
-  include Namecheap::Dynamic::Dns
-
-  def initialize
-    setup('domains.yml')
-    process_domains
-  end
-end

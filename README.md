@@ -1,8 +1,8 @@
-# Namecheap::Dynamic::Dns
+# Namecheap Dynamic Dns
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/namecheap/dynamic/dns`. To experiment with that code, run `bin/console` for an interactive prompt.
+Imagine you want to host your development server from home. So you buy a domain from namecheap and point the sub-domains to your home I.P address. Now the problem is every couple of months or on every power failure (how ever rare they might be) you external I.P ends up changing. Now you have to login to your domain host and change the I.P for all of them.
 
-TODO: Delete this and the text above, and describe your gem
+This gem allows you to automatically easily change the I.P address of the subdomains that are pointing to your home Internet. It does this by checking your external I.P address with each specified subdomains to see if they match. Then if they don't match a call is made to namecheap to change it.
 
 ## Installation
 
@@ -24,7 +24,9 @@ Or install it yourself as:
 
 In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information.
 
-### YML
+## YML
+
+The file you are about to create can have any name. I named mine `domains.yml`. As long as you specify the file path you should be fine.
 
 Create a YML file with the following:
 
@@ -37,21 +39,34 @@ domains:
     subdomains:
       home:
       test:
+        # Subdomain level
         ip: 1.2.3.4
 
   foo.com:
     password: 3fj987jg0wi4u9e84fh0342jghjd
+    # Domain level
     ip: 2.4.6.8
 
     subdomains:
       bar:
       donkey:
-        ip: 1.3.5.7    
+        ip: aaa.com    
 ```
 
-Make sure that you git ignore this file since it has your password in it.
+#### Password
+The `password` here you will get from NameCheap when you select a domain and under `Advanced DNS` and enable `DYNAMIC DNS` and you will see `Dynamic DNS Password`.
 
-### Using Ruby
+#### I.P
+I.P can be host name as well. By default if you don't specify any I.P anywhere then the I.P will be the external I.P (wan) of the computer this gem is running from. If you specify an I.P address in domain level then any subdomains that did not specified an I.P address will user the I.P address of the domain. Any I.P you specifies in the subdomain level will only affect that subdomain. One thing to note which is if you are using a host name that uses load balancers then you may get different I.P on every call or every other call.
+
+#### Explanation
+The above settings translates to, example.com has two subdomains. First home.example.com will always have the external I.P address of the machine you are using this gem on. The last subdomain test.example.com will always have the I.P 1.2.3.4
+
+The second part of the settings translates to, foo.com has two subdomains. First subdomain bar.foo.com will always have I.P 2.4.6.8 and the second subdomain donkey.foo.com will always have I.P address of host aaa.com
+
+_NOTE: Make sure that you git ignore this file since it has your password in it._
+
+## Using Script
 
 In your ruby script include the modules.
 
@@ -59,6 +74,61 @@ In your ruby script include the modules.
 require 'namecheap-dynamic-dns'
 
 include Namecheap::Dynamic::Dns
+
+setup('domains.yml')
+process_domains
+```
+
+## Using Rails
+
+In you class enter the following.
+
+```ruby
+class Example
+  include Namecheap::Dynamic::Dns
+
+  def initialize(config_file)
+    setup(config_file)
+  end
+end
+```
+
+Then to process the domains
+```ruby
+foo = Example.new('domains.yml')
+foo.process_domains
+```
+
+## Other Methods
+These methods you won't need to use but can be useful for you in other way.
+
+```ruby
+# Get external I.P
+external_ip
+
+# Get IP from hostname
+host_to_ip('google.com')
+
+# Valid IP?
+an_ip?('1.2.3.4')
+
+# Get list of domains
+domains
+
+# Get all subdomains given domain name from configuration file
+subdomains?('google.com')
+
+# Chack is domain specified is valid
+valid_domain?('google.com')
+
+# Force reload config YML file
+load_config
+
+# See raw response
+xml_response
+
+# See JSON response
+response
 ```
 
 ## Contributing
