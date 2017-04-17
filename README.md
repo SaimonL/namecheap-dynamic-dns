@@ -22,9 +22,13 @@ Or install it yourself as:
 
 ## Usage
 
-In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information.
+In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information. Also you will need to have connection to Internet.
 
-## YML
+If you are in highly secure site then the following domains needs to be white listed:  
+* dynamicdns.park-your-domain.com
+* whatismyip.akamai.com
+
+### YML
 
 The file you are about to create can have any name. I named mine `domains.yml`. As long as you specify the file path you should be fine.
 
@@ -95,7 +99,7 @@ end
 
 Then to process the domains
 ```ruby
-foo = Example.new('domains.yml')
+foo = Example.new('config/domains.yml')
 foo.process_domains
 ```
 
@@ -114,9 +118,6 @@ an_ip?('1.2.3.4')
 
 # Get list of domains
 domains
-
-# Get all subdomains given domain name from configuration file
-subdomains?('google.com')
 
 # Chack is domain specified is valid
 valid_domain?('google.com')
