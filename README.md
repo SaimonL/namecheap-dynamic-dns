@@ -22,9 +22,9 @@ Or install it yourself as:
 
 ## Usage
 
-In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information. Also you will need to have connection to Internet.
+In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information. You control the run time interval either through ruby script via cronjob or by rails. I recommend at least 5 minutes gap in-between checks. Some DNS takes time to update. 
 
-If you are in highly secure site then the following domains needs to be white listed:  
+You will need to have connection to Internet.If you are in highly secure site then the following domains needs to be white listed:  
 * dynamicdns.park-your-domain.com
 * whatismyip.akamai.com
 
