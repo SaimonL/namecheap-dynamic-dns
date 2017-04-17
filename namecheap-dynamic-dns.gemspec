@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{NameCheap Dynamic DNS}
   spec.description   = %q{If you host your services from home your wan I.P can change over time.
                           This gem will help you by making sure the subdomains always point to your home wan ip.}
-  spec.homepage      = 'TODO: Put your gem\'s website or public repo URL here.'
+  spec.homepage      = 'https://github.com/SaimonL/namecheap-dynamic-dns'
   spec.license       = 'MIT'
 
   if spec.respond_to?(:metadata)
