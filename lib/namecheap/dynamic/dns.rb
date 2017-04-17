@@ -17,8 +17,6 @@ require 'namecheap/dynamic/dns/request'
 require 'namecheap/dynamic/dns/settings'
 require 'namecheap/dynamic/dns/network'
 
-require 'pry'
-
 module Namecheap
   module Dynamic
     # This is the main module where all the rest loads from.
