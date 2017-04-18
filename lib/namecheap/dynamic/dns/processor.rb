@@ -56,7 +56,7 @@ module Namecheap
         end
 
         def process_ip(target_ip, attributes)
-          if attributes.key?(:ip) && !attributes[:ip].strip.empty?
+          if attributes && attributes.key?(:ip) && !attributes[:ip].strip.empty?
             target_ip = attributes[:ip]
           end
           extract_ip(target_ip)
