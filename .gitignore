@@ -7,8 +7,13 @@
 /pkg/
 /spec/reports/
 /tmp/
+*.tmp
 
 # rspec failure tracking
 .rspec_status
+
+# IDE
 /.idea
+
+# Private files
 /domains.yml
