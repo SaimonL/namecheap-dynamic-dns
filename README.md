@@ -75,7 +75,7 @@ _NOTE: Make sure that you git ignore this file since it has your password in it.
 In your ruby script include the modules.
 
 ```ruby
-require 'namecheap-dynamic-dns'
+require 'namecheap/dynamic/dns'
 
 include Namecheap::Dynamic::Dns
 
