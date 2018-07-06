@@ -7,9 +7,13 @@ module Namecheap
       module Processor
         def process_domains
           return unless pre_check_domain
+
+          new_report
+          clear_report_memory
           self.updated_domains = []
 
           domains.each do |domain, attr|
+            
             next unless pre_check_sub_domains(domain, attr)
             logger.info("Checking domain: #{domain}")
             process_subdomains(domain,

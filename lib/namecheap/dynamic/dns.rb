@@ -10,12 +10,14 @@ require 'open-uri'
 require 'resolv'
 require 'ipaddress'
 require 'logger'
+require 'csv'
 
 require 'namecheap/dynamic/dns/version'
 require 'namecheap/dynamic/dns/processor'
 require 'namecheap/dynamic/dns/request'
 require 'namecheap/dynamic/dns/settings'
 require 'namecheap/dynamic/dns/network'
+require 'namecheap/dynamic/dns/report'
 
 module Namecheap
   module Dynamic
@@ -25,6 +27,7 @@ module Namecheap
       include Request
       include Settings
       include Network
+      include Report
 
       attr_accessor :config_file, :config, :response, :xml_response, :ip, :updated_domains, :logger
 
