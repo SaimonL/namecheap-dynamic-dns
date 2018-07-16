@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'pry'
+require 'pry-nav'
 
 require 'xml/to/hash'
 
@@ -18,6 +20,7 @@ require 'namecheap/dynamic/dns/request'
 require 'namecheap/dynamic/dns/settings'
 require 'namecheap/dynamic/dns/network'
 require 'namecheap/dynamic/dns/report'
+
 
 module Namecheap
   module Dynamic

@@ -9,7 +9,7 @@ module Namecheap
 
         def new_report(path = nil)
           self.report_path = path || 'report.csv'
-          self.report_data = [['Domain', 'Subdomain', 'Action', 'From I.P', 'To I.P', 'Message', 'Time']]
+          self.report_data = [['Domain', 'Subdomain', 'Action', 'Processed?', 'From I.P', 'To I.P', 'Has Error', 'Message', 'Time']]
           self.report_memory = Hash.new
         end
 
@@ -18,10 +18,12 @@ module Namecheap
             domain: '',
             sub_domain: '',
             action: 'Initialize',
+            processed: false,
             from_ip: '',
             to_ip: '',
+            error: false,
             message: '',
-            time: Time.zone.now
+            time: Time.now.utc
           }
         end
 
@@ -30,15 +32,21 @@ module Namecheap
             report_memory[:domain],
             report_memory[:sub_domain],
             report_memory[:action],
+            report_memory[:processed],
             report_memory[:from_ip],
             report_memory[:to_ip],
+            report_memory[:error],
             report_memory[:message],
             report_memory[:time]
           ])
         end
 
         def save_report
-          File.open(report_path,'w') { |f| f.write(report_data.to_csv) }
+          File.open(report_path,'w') do |f|
+            report_data.each do |row|
+              f.write(row.to_csv)
+            end
+          end
         end
       end
     end

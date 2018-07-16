@@ -33,6 +33,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'xml-to-hash'
   spec.add_dependency 'ipaddress'
+  spec.add_dependency 'pry'
+  spec.add_dependency 'pry-nav'
 
   spec.add_development_dependency 'bundler', '~> 1.14'
   spec.add_development_dependency 'rake'

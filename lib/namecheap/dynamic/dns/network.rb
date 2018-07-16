@@ -16,14 +16,29 @@ module Namecheap
         end
 
         def host_to_ip(host_name)
-          begin
-            Resolv.getaddress(host_name)
-          rescue StandardError => err
-            logger.fatal('Failed to retrieve host I.P. address')
-            logger.debug("Host Name: #{hostname}")
-            logger.error(err)
-            host_name
-          end
+          Resolv.getaddress(host_name)
+        rescue Resolv::ResolvError => err
+          logger.fatal(err.message)
+          logger.debug("Host Name: #{host_name}")
+          logger.error(err)
+
+          self.report_memory[:error] = true
+          self.report_memory[:message] = err.message
+          store_report_memory
+          save_report
+
+          return host_name
+        rescue StandardError => err
+          logger.fatal('Failed to retrieve host I.P. address')
+          logger.debug("Host Name: #{host_name}")
+          logger.error(err)
+
+          self.report_memory[:error] = true
+          self.report_memory[:message] = err.message
+          store_report_memory
+          save_report
+
+          return host_name
         end
 
         def an_ip?(host_name)
@@ -39,8 +54,11 @@ module Namecheap
         end
 
         def host_ip_match?(domain, target, target_ip)
+          self.report_memory[:action] = 'checking current domain\'s ip address'
           host = %w(@ *).include?(target) ? domain : [target, domain].join('.')
-          host_to_ip(host) == target_ip
+          current_ip = host_to_ip(host)
+          self.report_memory[:from_ip] = current_ip
+          current_ip == target_ip
         end
 
         def valid_domain?(target_domain)

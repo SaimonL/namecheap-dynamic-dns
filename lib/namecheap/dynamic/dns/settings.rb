@@ -28,7 +28,15 @@ module Namecheap
         end
 
         def valid_domain?(domain)
+          self.report_memory[:action] = 'validate domain'
+
           unless valid_domain?(domain)
+
+            self.report_memory[:error] = true
+            self.report_memory[:message] = "Failed to validate domain: #{domain}"
+            store_report_memory
+            save_report
+
             logger.error("Invalid domain found #{domain}.")
             return false
           end
