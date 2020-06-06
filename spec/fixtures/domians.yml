@@ -1,0 +1,31 @@
+# Will not touch root domain "example.com" and subdomain "staging"
+example.com:
+  settings: 
+    password: f249fhabcdu9e84fhprjzjb3a6
+
+  subdomains:
+    staging:
+
+# Will change the root domain "foo.com" to I.P "2.4.6.8"
+# Will NOT change the subdomain "bar" at all since "ip" is missing.     
+# Subdomain donkey the ip will change to the domain aaa.com I.P address
+foo.com:
+  settings:
+    password: 3fj987jg0wi4u9e84fh0342jghjd
+    ip: 2.4.6.8
+
+  subdomains:
+    bar:
+    donkey:
+      ip: aaa.com 
+
+# Will change the root domain I.P to the current computer's WAN (external) I.P address
+# Same goes for the subdomain home
+bar.com:
+  settings:
+    password: 3fj987jg0wi4u9e84fh0342jghjd
+    ip: !self
+
+  subdomains:
+    home:
+      ip: !self

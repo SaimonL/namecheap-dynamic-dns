@@ -2,7 +2,7 @@
 
 Imagine you want to host your development server from home. So you buy a domain from namecheap and point the sub-domains to your home I.P address. Now the problem is every couple of months or on every power failure (how ever rare they might be) you external I.P ends up changing. Now you have to login to your domain host and change the I.P for all of them.
 
-This gem allows you to automatically easily change the I.P address of the subdomains that are pointing to your home Internet. It does this by checking your external I.P address with each specified subdomains to see if they match. Then if they don't match a call is made to namecheap to change it.
+This gem allows you to automatically easily change the I.P address of the subdomains that are pointing to your home Internet. It does this by checking your external I.P address with each specified subdomains to see if they match. Then if they don't match a call is made to namecheap to change it.  
 
 ## Installation
 
@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ## Usage
 
-In order to use this gem you must first create a YML file that tells this gem information about what are the domain/s to target and some additional information. You control the run time interval either through ruby script via cronjob or by rails. I recommend at least 5 minutes gap in-between checks. Some DNS takes time to update. 
+In order to use this gem you must first go to Namecheap and set the "Type" to "A + Dynamic DNS Record" and then enable "DYNAMIC DNS" below in the "Advanced DNS" section. Second you will need to create a YML file that tells this gem information about what are the domain/s to target and some additional information. You control the run time interval either through ruby script via cronjob or by rails. I recommend 1 hour gap in-between checks since I.P don't really change that often. Some DNS takes time to update. 
 
 You will need to have connection to Internet.If you are in highly secure site then the following domains needs to be white listed:  
 * dynamicdns.park-your-domain.com
@@ -37,38 +37,42 @@ Create a YML file with the following:
 ```yaml
 ---
 domains:
+  # Will not touch root domain "example.com" and subdomain "staging"
   example.com:
-    password: 74gh9j3eufh86gh39jygh9f8h3f4
-
     subdomains:
-      home:
-      test:
-        # Subdomain level
-        ip: 1.2.3.4
+      staging:
 
+  # Will change the root domain "foo.com" to I.P "2.4.6.8"
+  # Will NOT change the subdomain "bar" at all since "ip" is missing.     
+  # Subdomain donkey the ip will change to the domain aaa.com I.P address
   foo.com:
     password: 3fj987jg0wi4u9e84fh0342jghjd
-    # Domain level
     ip: 2.4.6.8
 
     subdomains:
       bar:
       donkey:
-        ip: aaa.com    
+        ip: aaa.com 
+
+  # Will change the root domain I.P to the current computer's WAN (external) I.P address
+  # Same goes for the subdomain home
+  bar.com:
+    password: 701982jg0w08b9e84fh0628jghab
+    ip: !self
+
+    subdomains:
+      home:
+        ip: !self
+  
 ```
+_NOTE: Make sure that you git ignore this file since it has your password in it._
 
 #### Password
 The `password` here you will get from NameCheap when you select a domain and under `Advanced DNS` and enable `DYNAMIC DNS` and you will see `Dynamic DNS Password`.
 
 #### I.P
-I.P can be host name as well. By default if you don't specify any I.P anywhere then the I.P will be the external I.P (wan) of the computer this gem is running from. If you specify an I.P address in domain level then any subdomains that did not specified an I.P address will user the I.P address of the domain. Any I.P you specifies in the subdomain level will only affect that subdomain. One thing to note which is if you are using a host name that uses load balancers then you may get different I.P on every call or every other call.
+I.P can be an i.p or host name as well. By default if you don't specify any I.P anywhere then nothing will happen for that subdomain or root domain. If you want to use the external I.P (wan) of the computer this gem is running from then for "ip" set it to "!self". One thing to note which is if you are using a host name that uses load balancers then you may get different I.P address on every call.
 
-#### Explanation
-The above settings translates to, example.com has two subdomains. First home.example.com will always have the external I.P address of the machine you are using this gem on. The last subdomain test.example.com will always have the I.P 1.2.3.4
-
-The second part of the settings translates to, foo.com has two subdomains. First subdomain bar.foo.com will always have I.P 2.4.6.8 and the second subdomain donkey.foo.com will always have I.P address of host aaa.com
-
-_NOTE: Make sure that you git ignore this file since it has your password in it._
 
 ## Using Script
 

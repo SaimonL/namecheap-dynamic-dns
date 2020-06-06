@@ -45,7 +45,8 @@ module Namecheap
           return unless subdomains?(attr)
 
           self.report_memory[:action] = 'checking ip address'
-          return if attr[:ip].nil? && ip.nil?
+          return if attr[:ip].nil?
+          
           true
         end
 
